@@ -35,6 +35,6 @@ public class CachingBreedFetcher implements BreedFetcher {
         if (delegate instanceof BreedFetcherForLocalTesting) {
             return ((BreedFetcherForLocalTesting) delegate).getCallCount();
         }
-        return -1; // indicates that delegate doesn't support counting
+        return -1;
     }
 }
