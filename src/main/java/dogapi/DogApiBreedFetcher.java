@@ -31,27 +31,30 @@ public class DogApiBreedFetcher implements BreedFetcher {
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
+                throw new BreedNotFoundException("API request failed with code: " + response.code());
             }
 
             String jsonData = response.body().string();
             JSONObject jsonObject = new JSONObject(jsonData);
             String status = jsonObject.getString("status");
 
+            // If breed not found
             if (status.equals("error")) {
                 throw new BreedNotFoundException(jsonObject.getString("message"));
             }
 
+            // If breed exists
             JSONArray subBreedsArray = jsonObject.getJSONArray("message");
             List<String> subBreeds = new ArrayList<>();
-
             for (int i = 0; i < subBreedsArray.length(); i++) {
                 subBreeds.add(subBreedsArray.getString(i));
             }
 
+            // Return empty list if breed exists but has no sub-breeds
             return subBreeds;
         } catch (IOException e) {
-            throw new BreedNotFoundException("Failed to fetch data for breed: " + breed);
+            // Only throw if something went *really* wrong (e.g., network)
+            throw new BreedNotFoundException("Unable to fetch breed data: " + breed);
         }
     }
 }
