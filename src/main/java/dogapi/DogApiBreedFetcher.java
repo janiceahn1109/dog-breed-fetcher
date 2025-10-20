@@ -29,7 +29,7 @@ public class DogApiBreedFetcher implements BreedFetcher {
      */
     @Override
     public List<String> getSubBreeds(String breed) throws BreedNotFoundException {
-        // Basic validation
+
         if (breed == null || breed.isEmpty()) {
             throw new BreedNotFoundException("Breed name cannot be null or empty.");
         }
@@ -39,7 +39,7 @@ public class DogApiBreedFetcher implements BreedFetcher {
 
         try (Response response = client.newCall(request).execute()) {
 
-            // Ensure we got a proper response
+
             if (response.body() == null) {
                 throw new BreedNotFoundException("Empty response from API.");
             }
@@ -47,12 +47,12 @@ public class DogApiBreedFetcher implements BreedFetcher {
             String jsonData = response.body().string();
             JSONObject jsonObject = new JSONObject(jsonData);
 
-            // Check if API returned an error
+
             if (jsonObject.has("status") && jsonObject.getString("status").equalsIgnoreCase("error")) {
                 throw new BreedNotFoundException("Breed not found: " + breed);
             }
 
-            // Extract the sub-breeds list
+
             JSONArray subBreedsArray = jsonObject.getJSONArray("message");
             List<String> subBreeds = new ArrayList<>();
 
@@ -60,11 +60,11 @@ public class DogApiBreedFetcher implements BreedFetcher {
                 subBreeds.add(subBreedsArray.getString(i));
             }
 
-            // Return normally — empty list is valid
+
             return subBreeds;
 
         } catch (IOException e) {
-            // Convert any IO/network issue to BreedNotFoundException
+
             throw new BreedNotFoundException("Failed to fetch breed data: " + breed);
         }
     }
