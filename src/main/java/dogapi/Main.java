@@ -5,27 +5,30 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-        String breed = "hound";
-        BreedFetcher breedFetcher = new CachingBreedFetcher(new BreedFetcherForLocalTesting());
-        int result = getNumberOfSubBreeds(breed, breedFetcher);
-        System.out.println(breed + " has " + result + " sub breeds");
-
-        breed = "cat";
-        result = getNumberOfSubBreeds(breed, breedFetcher);
-        System.out.println(breed + " has " + result + " sub breeds");
+        BreedFetcher fetcher = new CachingBreedFetcher(new DogApiBreedFetcher());
+        try {
+            System.out.println("Sub-breeds of bulldog: " + fetcher.getSubBreeds("bulldog"));
+        } catch (BreedFetcher.BreedNotFoundException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
     }
+
 
     /**
      * Return the number of sub breeds that the given dog breed has according to the
      * provided fetcher.
-     * @param breed the name of the dog breed
+     *
+     * @param breed        the name of the dog breed
      * @param breedFetcher the breedFetcher to use
      * @return the number of sub breeds. Zero should be returned if there are no sub breeds
      * returned by the fetcher
      */
-    public static int getNumberOfSubBreeds(String breed, BreedFetcher breedFetcher) {
-        // TODO Task 3 implement this code so that it is entirely consistent with its provided documentation.
-        // return statement included so that the starter code can compile and run.
-        return -1;
+    public static int getNumberOfSubBreeds(String breed, BreedFetcher fetcher) {
+        try {
+            List<String> subs = fetcher.getSubBreeds(breed);
+            return subs.size();
+        } catch (BreedFetcher.BreedNotFoundException e) {
+            return 0; // return 0 when the breed is invalid, as the tests expect
+        }
     }
 }
