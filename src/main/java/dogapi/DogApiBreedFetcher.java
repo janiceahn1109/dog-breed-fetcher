@@ -38,22 +38,22 @@ public class DogApiBreedFetcher implements BreedFetcher {
             JSONObject jsonObject = new JSONObject(jsonData);
             String status = jsonObject.getString("status");
 
-            // If breed not found
+
             if (status.equals("error")) {
                 throw new BreedNotFoundException(jsonObject.getString("message"));
             }
 
-            // If breed exists
+
             JSONArray subBreedsArray = jsonObject.getJSONArray("message");
             List<String> subBreeds = new ArrayList<>();
             for (int i = 0; i < subBreedsArray.length(); i++) {
                 subBreeds.add(subBreedsArray.getString(i));
             }
 
-            // Return empty list if breed exists but has no sub-breeds
+
             return subBreeds;
         } catch (IOException e) {
-            // Only throw if something went *really* wrong (e.g., network)
+
             throw new BreedNotFoundException("Unable to fetch breed data: " + breed);
         }
     }
